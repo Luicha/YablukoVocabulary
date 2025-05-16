@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tarjetas de Ucraniano - Inglés</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 2rem;
+    }
+
+    #search {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 2rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .ukrainian {
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #2980b9;
+    }
+
+    .english {
+      font-size: 1.1rem;
+      margin-top: 0.3rem;
+      color: #34495e;
+    }
+
+    .tags {
+      margin-top: 0.6rem;
+      font-size: 0.85rem;
+      color: #7f8c8d;
+    }
+
+    @media (max-width: 500px) {
+      body {
+        margin: 1rem;
+        padding: 0 0.5rem;
+      }
+
+      .card {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Tarjetas de Ucraniano - Inglés</h1>
+  <input type="text" id="search" placeholder="Buscar palabra en ucraniano o inglés..." />
+  <div id="cards"></div>
+
+  <script>
+    let allCards = [];
+
+    fetch('procesado.json')
+      .then(res => res.json())
+      .then(data => {
+        allCards = data;
+        renderCards(allCards);
+      })
+      .catch(err => console.error('Error al cargar JSON:', err));
+
+    const container = document.getElementById('cards');
+    const searchInput = document.getElementById('search');
+
+    function renderCards(cards) {
+      container.innerHTML = '';
+      if (cards.length === 0) {
+        container.innerHTML = '<p>No se encontraron resultados.</p>';
+        return;
+      }
+      cards.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="ukrainian">${item.ukrainian}</div>
+          <div class="english">${item.english}</div>
+          <div class="tags">${item.tags}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    searchInput.addEventListener('input', () => {
+      const term = searchInput.value.toLowerCase().trim();
+      const filtered = allCards.filter(item =>
+        item.ukrainian.toLowerCase().includes(term) ||
+        item.english.toLowerCase().includes(term)
+      );
+      renderCards(filtered);
+    });
+  </script>
+</body>
+</html>
